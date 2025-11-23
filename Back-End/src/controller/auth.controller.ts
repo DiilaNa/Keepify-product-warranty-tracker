@@ -4,6 +4,7 @@ import { Role, Status, User } from "../model/User";
 import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/token";
 import jwt from "jsonwebtoken"
+import { error } from "console";
 
 dotenv.config()
 
@@ -115,5 +116,37 @@ export const handleRefreshToken = async(req:Request,res:Response) => {
 
     }catch(err:any){
         res.status(403).json({message:"Invalid or Expired Token"})
+    }
+}
+
+export const adminRegister = async(req:Request,res:Response) => {
+    try{
+        const {firstname,lastname,email,password} = req.body;
+
+        if(!firstname || !lastname || !email || !password){
+            return res.status(400).json({message: "All fields are required"})
+        }
+
+        const existingUser = await User.findOne({email})
+        
+        if(existingUser){
+            return res.status(400).json({message:"Email Already registered"})
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newAdmin = new User({
+            firstname,
+            lastname,
+            email,
+            password: hashedPassword,
+            role: Role.ADMIN,
+            approved: Status.ACTIVE
+        })
+
+        await newAdmin.save();
+
+    }catch(err:any){
+        res.status(500).json({message: "Server Error",error: err.message})
     }
 }
