@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 import { Request, Response } from "express"
 import { Role, Status, User } from "../model/User";
 import bcrypt from "bcryptjs"
-import { signAccessToken } from "../utils/token";
+import { signAccessToken, signRefreshToken } from "../utils/token";
 
 dotenv.config()
 
@@ -72,13 +72,15 @@ export const login = async(req: Request,res:Response) =>{
         }
 
         const accessToken = signAccessToken(existingUser)
+        const refreshToken = signRefreshToken(existingUser)
 
         res.status(200).json({
             message: "success",
             data:{
                 email: existingUser.email,
                 roles: existingUser.role,
-                accessToken
+                accessToken,
+                refreshToken
             }
         })
 
