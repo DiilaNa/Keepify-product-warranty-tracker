@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { log , error } from "console";
 import dotenv from "dotenv"
 import cors from "cors"
+import auth from "./routes/auth.routes"
 
 dotenv.config()
 
@@ -18,7 +19,7 @@ app.use(cors({
   methods:["GET","POST","PUT","DELETE"]
 }))
 
-// app.use("/api/v1/auth",auth)
+app.use("/api/v1/auth",auth)
 
 mongoose
 .connect(MONGO_URI)
