@@ -10,7 +10,7 @@ export const signAccessToken = (user: IUser): string => {
     return jwt.sign(
         {
             sub:user._id.toString(),
-            roles: user.role
+            role: user.role
         },
         JWT_SECRET,
         {

@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/token";
 import jwt from "jsonwebtoken"
 import { error } from "console";
+import { AuthRequest } from "../middleware/auth";
 
 dotenv.config()
 
@@ -119,7 +120,7 @@ export const handleRefreshToken = async(req:Request,res:Response) => {
     }
 }
 
-export const adminRegister = async(req:Request,res:Response) => {
+export const adminRegister = async(req:AuthRequest,res:Response) => {
     try{
         const {firstname,lastname,email,password} = req.body;
 
@@ -146,6 +147,17 @@ export const adminRegister = async(req:Request,res:Response) => {
 
         await newAdmin.save();
 
+        res.status(201).json({
+            message: "Admin created successfully",
+            data: {
+                id: newAdmin._id,
+                firstname: newAdmin.firstname,
+                lastname: newAdmin.lastname,
+                email: newAdmin.email,
+                role: newAdmin.role,
+                approved: newAdmin.approved
+            }
+        });
     }catch(err:any){
         res.status(500).json({message: "Server Error",error: err.message})
     }
