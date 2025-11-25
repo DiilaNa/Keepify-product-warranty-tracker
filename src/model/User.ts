@@ -20,7 +20,7 @@ export interface IUser extends Document{
     role : Role;
     approved : Status;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt?: Date;
 }
 
 const userSchema = new Schema<IUser>({
