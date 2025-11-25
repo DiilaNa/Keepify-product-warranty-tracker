@@ -11,7 +11,7 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
             return res.status(401).json({message:"Unauthorized"})
         }
 
-        const {title, content} = req.body
+        const {title, content, category} = req.body
         let imageURl = "";
 
         if(req.file){
@@ -35,15 +35,15 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
             title,
             content,
             status: AnnouncementStatus.PUBLISHED,
-            imageURl,
-            ownerId:req.user._id,
-            category: req.body.categoryId
+            img_url: imageURl,
+            ownerId:req.user.sub,
+            category
         })
 
         await newAnnouncement.save();
 
         res.status(201).json({
-            message:"Annoucment Posted successfully",
+            message:"Announcement Posted successfully",
             data: newAnnouncement
         })
 
