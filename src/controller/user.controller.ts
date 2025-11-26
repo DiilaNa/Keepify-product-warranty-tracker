@@ -8,7 +8,7 @@ export const loadWarrantyPosts = async(req: AuthRequest, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 10;
         const skip = (page - 1) * limit;
 
-        const posts = await Warranty.find()
+        const posts = await Warranty.find({ ownerId: req.user.sub })
         .populate("name","description")
         .sort({createdAt: -1})
         .skip(skip)
