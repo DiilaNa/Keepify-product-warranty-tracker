@@ -5,11 +5,12 @@ import { Role } from "../model/User";
 import { save_warranty } from "../controller/popups.user/warranty.controller";
 import {upload} from "../middleware/upload"
 import { loadWarrantyPosts } from "../controller/user.controller";
+import { viewWarranty } from "../controller/popups.user/viewBill.controller";
 
 const warrantyRouter = Router();
 
-
 warrantyRouter.post("/saveWarranty", authenticate, authorizeRoles([Role.USER]),upload.single("image"),save_warranty)
 warrantyRouter.get("/loadwarranties",authenticate,authorizeRoles([Role.USER]),loadWarrantyPosts)
+warrantyRouter.get("/view/:id", authenticate, authorizeRoles([Role.USER]),viewWarranty);
 
 export default warrantyRouter;
