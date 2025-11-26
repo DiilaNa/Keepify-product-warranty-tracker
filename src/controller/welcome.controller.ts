@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Announcement, AnnouncementStatus } from "../model/Announcements";
 
-export const welcome = async(req: Request, res: Response) => {
+export const loadAnnouncements = async(req: Request, res: Response) => {
     try{
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
