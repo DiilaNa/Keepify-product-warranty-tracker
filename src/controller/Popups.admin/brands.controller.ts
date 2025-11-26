@@ -38,7 +38,7 @@ export const save_brand =async(req:AuthRequest,res:Response) => {
 
 
         const newBrand = new Brand({
-            category,
+            category: categoryDoc._id,
             brand_name,
             // image_url: imageURl,
         })

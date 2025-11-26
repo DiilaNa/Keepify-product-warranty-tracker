@@ -38,7 +38,7 @@ export const save_warranty= async(req:AuthRequest,res:Response) => {
             }
 
         // Find Brand ID
-        const brandDoc = await Brand.findOne({ name: brand });
+        const brandDoc = await Brand.findOne({ brand_name: brand });
             if (!brandDoc) {
                 return res.status(400).json({ message: "Invalid brand selected" });
             }

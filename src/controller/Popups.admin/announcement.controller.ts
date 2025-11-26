@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../../middleware/auth";
 import cloudinary from "../../config/cloudinary";
 import { Announcement, AnnouncementStatus } from "../../model/Announcements";
+import { Category } from "../../model/Category";
 
 export const save_announcement = async(req:AuthRequest,res:Response) => {
     try{
@@ -29,13 +30,18 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
             imageURl = result.secure_url;
         }
 
+        const categoryDoc = await Category.findOne({ name: category });
+            if (!categoryDoc) {
+                return res.status(400).json({ message: "Invalid category selected" });
+            }
+
         const newAnnouncement = new Announcement({
             title,
             content,
             status: AnnouncementStatus.PUBLISHED,
             img_url: imageURl,
             ownerId:req.user.sub,
-            category
+            category: categoryDoc._id
         })
 
         await newAnnouncement.save();
