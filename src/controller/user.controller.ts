@@ -18,16 +18,16 @@ export const loadWarrantyPosts = async(req: AuthRequest, res: Response) => {
         const totalPages = Math.ceil(total / limit);
         
         res.status(200).json({
-            message:"Warranty Posts fetched successfully in admin welcome page",
+            message:"Warranty Posts fetched successfully",
             data:posts,
             page,
             totalPages,
             totalWarranties: total
         })
-        
+
     }catch(error:any){
         res.status(500).json({
-            message:"Error in Fetching Warranty Posts in admin welcome page",
+            message:"Error in Fetching Warranty Posts",
             error: error?.message
         })
     }

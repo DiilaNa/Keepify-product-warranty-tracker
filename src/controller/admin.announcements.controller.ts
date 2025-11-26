@@ -17,7 +17,7 @@ export const loadAdminAnnouncements = async(req: Request, res: Response) => {
         const totalPages = Math.ceil(total / limit);
         
         res.status(200).json({
-            message:"Announcements fetched successfully in welcome page",
+            message:"Announcements fetched successfully in welcome page (admin)",
             data:posts,
             page,
             totalPages,
@@ -25,7 +25,7 @@ export const loadAdminAnnouncements = async(req: Request, res: Response) => {
         })
     }catch(error:any){
         res.status(500).json({
-            message:"Error in Fetching announcements in welcome page",
+            message:"Error in Fetching announcements in welcome page (admin)",
             error: error?.message
         })
     }
