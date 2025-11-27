@@ -32,3 +32,59 @@ export const loadWarrantyPosts = async(req: AuthRequest, res: Response) => {
         })
     }
 }
+
+export const getWarrantyDashboardStats = async (req: AuthRequest, res: Response) => {
+    try {
+        const ownerId = req.user.sub // assuming you're using auth middleware
+
+        const now = new Date();
+
+        // Start of current month
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // End of current month
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        // Next 7 days range
+        const next7Days = new Date();
+        next7Days.setDate(next7Days.getDate() + 7);
+
+        // --- Dashboard Queries ---
+
+        // 1. Total warranties
+        const totalWarranties = await Warranty.countDocuments({ ownerId });
+
+        // 2. Expiring this month
+        const expiringThisMonth = await Warranty.countDocuments({
+            ownerId,
+            expiry_date: { $gte: startOfMonth, $lte: endOfMonth }
+        });
+
+        // 3. Expiring in next 7 days
+        const expiringNext7Days = await Warranty.countDocuments({
+            ownerId,
+            expiry_date: { $gte: now, $lte: next7Days }
+        });
+
+        // 4. Already expired warranties
+        const alreadyExpired = await Warranty.countDocuments({
+            ownerId,
+            expiry_date: { $lt: now }
+        });
+
+        return res.status(200).json({
+            message: "User dashboard stats fetched successfully",
+            data: {
+                ownerId,
+                totalWarranties,
+                expiringThisMonth,
+                expiringNext7Days,
+                alreadyExpired
+            }
+        });
+
+    } catch (error) {
+        console.error("Dashboard error:", error);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
