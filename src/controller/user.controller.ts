@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { Warranty } from "../model/Warranty";
 import { AuthRequest } from "../middleware/auth";
+import { Notification } from "../model/Notification";
 
 export const loadWarrantyPosts = async(req: AuthRequest, res: Response) => {
     try{
@@ -130,3 +131,21 @@ export const searchWarranties = async (req: AuthRequest, res: Response) => {
     }
 };
 
+export const getNotifications = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user.sub;
+
+        const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
+
+        const unreadCount = await Notification.countDocuments({ userId, read: false });
+
+        res.json({ 
+            success: true,
+            count: notifications.length,
+            unreadCount,
+            data: notifications,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to fetch notifications", error });
+    }
+};
