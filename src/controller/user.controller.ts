@@ -88,3 +88,45 @@ export const getWarrantyDashboardStats = async (req: AuthRequest, res: Response)
         res.status(500).json({ success: false, message: "Server Error" });
     }
 };
+
+export const searchWarranties = async (req: AuthRequest, res: Response) => {
+    try {
+        const ownerId = req.user.sub;
+        const { query, status, category, brand } = req.query;
+
+        const searchFilters: any = { ownerId };
+
+        if (query) {
+            searchFilters.$or = [
+            { name: { $regex: query as string, $options: "i" } },
+            { serial_number: { $regex: query as string, $options: "i" } },
+            { description: { $regex: query as string, $options: "i" } },
+        ];
+
+        // If user types a date like "2023-04"
+        const dateQuery = new Date(query as string);
+            if (!isNaN(dateQuery.getTime())) {
+                searchFilters.$or.push({ purchase_date: dateQuery });
+                searchFilters.$or.push({ expiry_date: dateQuery });
+            }
+        }
+
+        // Optional filters
+        if (status) searchFilters.status = status;
+        if (category) searchFilters.category = category;
+        if (brand) searchFilters.brandId = brand;
+
+        const results = await Warranty.find(searchFilters)
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            message: "Search completed successfully",
+            count: results.length,
+            data: results
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Search failed", error });
+    }
+};
+
