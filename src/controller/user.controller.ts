@@ -149,3 +149,25 @@ export const getNotifications = async (req: AuthRequest, res: Response) => {
         res.status(500).json({ success: false, message: "Failed to fetch notifications", error });
     }
 };
+
+export const markNotificationRead = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.user.sub;
+        const { id } = req.params;
+
+        const notification = await Notification.findOne({ _id: id, userId });
+        if (!notification) {
+            return res.status(404).json({ success: false, message: "Notification not found" });
+        }
+
+        notification.read = true;
+        await notification.save();
+
+        res.json({
+            success: true, 
+            message: "Notification marked as read",
+            data: notification });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to update notification", error });
+    }
+};
